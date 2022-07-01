@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="/home/arthur/a" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="2862"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,8:mainEntraMed"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="ConfEcon" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="80"/><column index="2" value="82"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="EntraMed" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="84"/><column index="2" value="80"/><column index="3" value="82"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="conflitos" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="53"/><column index="2" value="45"/><column index="3" value="33"/><column index="4" value="94"/><column index="5" value="95"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="organizacoes_m" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="84"/><column index="2" value="76"/><column index="3" value="80"/><column index="4" value="102"/><column index="5" value="43"/><column index="6" value="82"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">/*
+-- MilitaryChief
+CREATE TABLE &quot;chefes_militares&quot; (
+  &quot;codigo_chef&quot; int NOT NULL PRIMARY KEY,
+  &quot;faixa&quot; varchar, 
+  &quot;n_div&quot; int,
+  &quot;id_lider&quot; int NOT NULL,
+  &quot;codigo_grupo&quot; int,
+  FOREIGN KEY (&quot;codigo_grupo&quot;) REFERENCES &quot;grupos_armados&quot; (&quot;id&quot;),
+  FOREIGN KEY (&quot;id_lider&quot;) REFERENCES &quot;lideres_politicos&quot; (&quot;id&quot;)
+);
+-- PoliticalLeader
+CREATE TABLE &quot;lideres_politicos&quot; (
+  &quot;id&quot; int NOT NULL,
+  &quot;codigo_grupo&quot; int,
+  &quot;nome_l&quot; varchar,
+  &quot;apoios&quot; varchar,
+  PRIMARY KEY(&quot;id&quot;,&quot;codigo_grupo&quot;), 
+  FOREIGN KEY (&quot;codigo_grupo&quot;) REFERENCES &quot;grupos_armados&quot; (&quot;id&quot;)
+);
+-- ArmedGroup
+CREATE TABLE &quot;grupos_armados&quot; (
+  &quot;id&quot; int NOT NULL PRIMARY KEY,
+  &quot;nome_grupo&quot; varchar,
+  &quot;num_baixas&quot; int
+);
+-- Division
+CREATE TABLE &quot;divisoes&quot; (
+  &quot;divisao_id&quot; int NOT NULL,
+  &quot;codigo_grupo&quot; int NOT NULL,
+  &quot;num_baixas_d&quot; int,
+  &quot;barcos&quot; int,
+  &quot;tanques&quot; int,
+  &quot;avioes&quot; int,
+  &quot;homens&quot; int,
+  PRIMARY KEY(&quot;divisao_id&quot;, &quot;codigo_grupo&quot;),
+  FOREIGN KEY (&quot;codigo_grupo&quot;) REFERENCES &quot;grupos_armados&quot; (&quot;id&quot;)
+);
+-- Organization
+CREATE TABLE &quot;organizacoes_m&quot; (
+  &quot;codigo_org&quot; int NOT NULL PRIMARY KEY,
+  &quot;nome_org&quot; varchar,
+  &quot;tipo_ajuda&quot; varchar,
+  &quot;num_pessoas&quot; int,
+  &quot;tipo&quot; char,
+  &quot;org_lider&quot; char
+);
+-- Conflict
+CREATE TABLE &quot;conflitos&quot; (
+  &quot;codigo&quot; int NOT NULL PRIMARY KEY,
+  &quot;nome&quot; varchar,
+  &quot;tipo&quot; varchar,
+  &quot;num_feridos&quot; int,
+  &quot;num_mortos&quot; int
+);
+-- Weapon
+CREATE TABLE &quot;tipo_armas&quot; (
+  &quot;nome_arma&quot; varchar NOT NULL PRIMARY KEY,
+  &quot;indicador&quot; int
+);
+-- Dealer
+CREATE TABLE &quot;traficantes&quot; (
+  &quot;id_traficante&quot; int NOT NULL PRIMARY KEY,
+  &quot;nome_traficante&quot; varchar
+);
+-- SupplyWeaponArmedGroupDealer
+CREATE TABLE &quot;fornece&quot; (
+  &quot;codigo_grupo&quot; int NOT NULL,
+  &quot;nome_arma&quot; varchar NOT NULL,
+  &quot;id_traficante&quot; int NOT NULL,
+  &quot;num_armas&quot; int,
+  PRIMARY KEY(&quot;codigo_grupo&quot;, &quot;nome_arma&quot;, &quot;id_traficante&quot;),
+  FOREIGN KEY (&quot;codigo_grupo&quot;) REFERENCES &quot;grupos_armados&quot; (&quot;id&quot;),
+  FOREIGN KEY (&quot;nome_arma&quot;) REFERENCES &quot;tipos_armas&quot; (&quot;nome_arma&quot;),
+  FOREIGN KEY (&quot;id_traficante&quot;) REFERENCES &quot;traficantes&quot; (&quot;id_traficante&quot;)
+);
+
+-- DialogPoliticalLeaderArmedGroupOrganization
+CREATE TABLE &quot;dialoga&quot; (
+  &quot;codigo_lider&quot; int NOT NULL,
+  &quot;codigo_grupo&quot; int NOT NULL,
+  &quot;organizacoes_id&quot; int NOT NULL,
+  PRIMARY KEY(&quot;codigo_lider&quot;, &quot;codigo_grupo&quot;, &quot;organizacoes_id&quot;),
+  FOREIGN KEY (&quot;codigo_lider&quot;) REFERENCES &quot;lideres_politicos&quot; (&quot;id&quot;),
+  FOREIGN KEY (&quot;codigo_grupo&quot;) REFERENCES &quot;grupos_armados&quot; (&quot;id&quot;),
+  FOREIGN KEY (&quot;organizacoes_id&quot;) REFERENCES &quot;organizacoes_m&quot; (&quot;codigo_org&quot;)
+);
+-- EnterPart
+CREATE TABLE &quot;EntPart&quot; (
+  &quot;grupo_armado_id&quot; int NOT NULL,
+  &quot;conflito_id&quot; int NOT NULL,
+  &quot;de_grupo&quot; timestamp NOT NULL,
+  PRIMARY KEY(&quot;grupo_armado_id&quot;, &quot;conflito_id&quot;, &quot;de_grupo&quot;),
+  FOREIGN KEY (&quot;grupo_armado_id&quot;) REFERENCES &quot;grupos_armados&quot; (&quot;id&quot;),
+  FOREIGN KEY (&quot;conflito_id&quot;) REFERENCES &quot;conflitos&quot; (&quot;codigo&quot;)
+);
+-- ExitPart
+CREATE TABLE &quot;SaidaPart&quot; (
+  &quot;grupo_armado_id&quot; int NOT NULL,
+  &quot;conflito_id&quot; int NOT NULL,
+  &quot;ds_grupo&quot; timestamp NOT NULL,
+  PRIMARY KEY(&quot;grupo_armado_id&quot;, &quot;conflito_id&quot;, &quot;ds_grupo&quot;),
+  FOREIGN KEY (&quot;grupo_armado_id&quot;) REFERENCES &quot;grupos_armados&quot; (&quot;id&quot;),
+  FOREIGN KEY (&quot;conflito_id&quot;) REFERENCES &quot;conflitos&quot; (&quot;codigo&quot;)
+);
+-- EnterMed
+CREATE TABLE &quot;EntraMed&quot; (
+  &quot;codigo_org&quot; int NOT NULL,
+  &quot;conflito_id&quot; int NOT NULL,
+  &quot;de_media&quot; timestamp NOT NULL,
+  PRIMARY KEY(&quot;codigo_org&quot;, &quot;conflito_id&quot;, &quot;de_media&quot;),
+  FOREIGN KEY (&quot;codigo_org&quot;) REFERENCES &quot;organizacoes_m&quot; (&quot;codigo_org&quot;),
+  FOREIGN KEY (&quot;conflito_id&quot;) REFERENCES &quot;conflitos&quot; (&quot;codigo&quot;)
+);
+-- ExitMed
+CREATE TABLE &quot;SaidaMed&quot; (
+  &quot;codigo_org&quot; int NOT NULL,
+  &quot;conflito_id&quot; int NOT NULL,
+  &quot;ds_media&quot; timestamp NOT NULL,
+  PRIMARY KEY(&quot;codigo_org&quot;, &quot;conflito_id&quot;, &quot;ds_media&quot;)
+  FOREIGN KEY (&quot;codigo_org&quot;) REFERENCES &quot;organizacoes_m&quot; (&quot;codigo_org&quot;),
+  FOREIGN KEY (&quot;conflito_id&quot;) REFERENCES &quot;conflitos&quot; (&quot;codigo&quot;)
+);
+-- CanSupply
+CREATE TABLE &quot;PodeFornecer&quot; (
+  &quot;nome_arma&quot; varchar,
+  &quot;id_traficante&quot; int,
+  &quot;quantidade&quot; int,
+  FOREIGN KEY (&quot;nome_arma&quot;) REFERENCES &quot;tipos_armas&quot; (&quot;nome_arma&quot;),
+  FOREIGN KEY (&quot;id_traficante&quot;) REFERENCES &quot;traficantes&quot; (&quot;id_traficante&quot;)
+);
+CREATE TABLE &quot;ConfRelig&quot; (
+  &quot;conflito_id&quot; int NOT NULL,
+  &quot;religiao&quot; varchar NOT NULL,
+  PRIMARY KEY (&quot;conflito_id&quot;, &quot;religiao&quot;),
+  FOREIGN KEY (&quot;conflito_id&quot;) REFERENCES &quot;conflitos&quot; (&quot;codigo&quot;)
+);
+CREATE TABLE &quot;ConfEcon&quot; (
+  &quot;conflito_id&quot; int NOT NULL,
+  &quot;mat_prima&quot; varchar NOT NULL,
+  PRIMARY KEY (&quot;conflito_id&quot;, &quot;mat_prima&quot;),
+  FOREIGN KEY (&quot;conflito_id&quot;) REFERENCES &quot;conflitos&quot; (&quot;codigo&quot;)
+);
+CREATE TABLE &quot;ConfRegiao&quot; (
+  &quot;conflito_id&quot; int NOT NULL,
+  &quot;regiao&quot; varchar NOT NULL,
+  PRIMARY KEY (&quot;conflito_id&quot;, &quot;regiao&quot;),
+  FOREIGN KEY (&quot;conflito_id&quot;) REFERENCES &quot;conflitos&quot; (&quot;codigo&quot;)
+);
+
+CREATE TABLE &quot;ConfEtnia&quot; (
+  &quot;conflito_id&quot; int NOT NULL,
+  &quot;etnia&quot; varchar NOT NULL,
+  PRIMARY KEY (&quot;conflito_id&quot;, &quot;etnia&quot;),
+  FOREIGN KEY (&quot;conflito_id&quot;) REFERENCES &quot;conflitos&quot; (&quot;codigo&quot;)
+);*/
+--INSERT INTO organizacoes_m VALUES (1, &quot;ala&quot;, &quot;tipo&quot;, 100, &quot;racial&quot;, &quot;18/07/2000&quot;);
+--INSERT INTO conflitos VALUES (1, &quot;ala&quot;, &quot;tipo&quot;, 100, 200);
+--INSERT INTO EntraMed VALUES (1, 1, &quot;18/07/2000&quot;);
+-- INSERT INTO EntraMed VALUES (2, 1, &quot;18/07/2000&quot;);</sql><current_tab id="0"/></tab_sql></sqlb_project>
